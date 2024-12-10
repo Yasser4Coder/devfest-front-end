@@ -1,67 +1,62 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import logo from "../../images/caat-removebg-preview 1.png";
 import img from "../../images/ArrowLeft.png";
-import img2 from "../../images/Camera Icon.png";
 import { IoCloudUploadOutline } from "react-icons/io5";
+import FileBase64 from "react-file-base64";
+import axios from "axios";
 
 const Register = () => {
-  const [file, setFile] = useState("");
   const [currentStep, setCurrentStep] = useState(1);
-  const [cameraAccessGranted, setCameraAccessGranted] = useState(false);
-  const [isWebcamActive, setIsWebcamActive] = useState(false);
-  const videoRef = useRef(null);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [driveLicense, setDriveLicense] = useState("");
+  const [vehicleRegistrations, setVehicleRegistrations] = useState("");
+  const [authorization, setAuthorization] = useState("");
+  const [message, setMessage] = useState(false);
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    password: "",
+    cpassword: "",
+  });
 
-  const [galleryImage, setGalleryImage] = useState(null);
+  const handleNext = () => setCurrentStep((prev) => Math.min(prev + 1, 4));
+  const handleBack = () => setCurrentStep((prev) => Math.max(prev - 1, 1));
 
-  const handleNext = () => {
-    setCurrentStep((prev) => Math.min(prev + 1, 4));
-  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const handleBack = () => {
-    setCurrentStep((prev) => Math.max(prev - 1, 1));
-  };
-
-  const handleCameraAccess = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
+      await axios.post("http://localhost:8080/api/register/newUser", {
+        fullName: formData.fullName,
+        email: formData.email,
+        password: formData.password,
+        cpassword: formData.cpassword,
+        driveLicense: driveLicense,
+        vehicleRegistrations: vehicleRegistrations,
+        authorization: authorization,
       });
-      setCameraAccessGranted(true);
-      alert("Camera access granted!");
-      // You can display the camera stream in a <video> element here
-      stream.getTracks().forEach((track) => track.stop()); // Stop stream after granting access
-    } catch (error) {
-      alert(
-        "Unable to access camera. Please allow camera access in browser settings."
-      );
-    }
-  };
-
-  const handleGallerySelect = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => setGalleryImage(reader.result);
-      reader.readAsDataURL(file);
+      setMessage("Registration successful!");
+      setTimeout(() => setMessage(false), 3000);
+    } catch (err) {
+      setErrorMessage("Failed to register. Please try again.");
+      setTimeout(() => setErrorMessage(""), 5000);
     }
   };
 
   return (
-    <div className="w-full mt-[20px] relative flex items-center justify-center overflow-x-hidden">
+    <div className="w-full mt-5 flex items-center justify-center">
       <div
-        className="absolute top-[5%] cursor-pointer left-[10%]"
+        className="absolute top-5 left-10 cursor-pointer"
         onClick={handleBack}
       >
         <img src={img} alt="Go Back" />
       </div>
-      <div className="flex flex-col items-center gap-[20px]">
-        <div>
-          <img src={logo} alt="Logo" />
-        </div>
+      <div className="flex flex-col items-center gap-5">
+        <img src={logo} alt="Logo" />
         <h1 className="text-2xl font-semibold">
           Upgrade to Comprehensive Motor Insurance Plan
         </h1>
-        <p className="text-[#828282]">
+        <p className="text-gray-500">
           Fill or update your information, and we’ll get your vehicle covered in
           no time.
         </p>
@@ -69,224 +64,153 @@ const Register = () => {
           {[1, 2, 3, 4].map((step) => (
             <React.Fragment key={step}>
               <div
-                className={`min-w-[25.6px] min-h-[25.6px] flex items-center justify-center rounded-full ${
+                className={`w-8 h-8 flex items-center justify-center rounded-full ${
                   currentStep >= step
-                    ? "bg-[#394496] text-white"
-                    : "border-[1px] border-[#828282] text-[#828282]"
+                    ? "bg-blue-600 text-white"
+                    : "border border-gray-400 text-gray-400"
                 }`}
               >
                 {step}
               </div>
               {step < 4 && (
                 <div
-                  className={`line h-[2px] w-full ${
-                    currentStep > step ? "bg-[#394496]" : "bg-[#D3DCE6]"
+                  className={`h-1 flex-1 ${
+                    currentStep > step ? "bg-blue-600" : "bg-gray-300"
                   }`}
                 ></div>
               )}
             </React.Fragment>
           ))}
         </div>
-
-        {currentStep === 1 && (
-          <form className="mb-[50px] w-full flex flex-col gap-[20px]">
-            <div className="flex flex-col gap-[15px] w-full">
-              <label className="text-[#696F79] text-lg">Your fullname*</label>
-              <input
-                className="text-[#696F79] w-full h-[55px] border-[1px] border-[#696F79] rounded-lg pl-[20px]"
-                type="text"
-              />
-            </div>
-            <div className="flex flex-col gap-[15px] w-full">
-              <label className="text-[#696F79] text-lg">Email address*</label>
-              <input
-                className="text-[#696F79] w-full h-[55px] border-[1px] border-[#696F79] rounded-lg pl-[20px]"
-                type="email"
-              />
-            </div>
-            <div className="flex flex-col gap-[15px] w-full">
-              <label className="text-[#696F79] text-lg">Create password*</label>
-              <input
-                className="text-[#696F79] w-full h-[55px] border-[1px] border-[#696F79] rounded-lg pl-[20px]"
-                type="password"
-              />
-            </div>
-            <div className="flex flex-col gap-[15px] w-full">
-              <label className="text-[#696F79] text-lg">
-                Confirm password*
-              </label>
-              <input
-                className="text-[#696F79] w-full h-[55px] border-[1px] border-[#696F79] rounded-lg pl-[20px]"
-                type="password"
-              />
-            </div>
-            <div className="flex items-center gap-[20px]">
-              <input className="w-[20px] h-[20px]" type="checkbox" />
-              <h1 className="text-[#696F79]">I agree to terms & conditions</h1>
-            </div>
-            <div
-              className="cursor-pointer bg-[#394496] h-[55px] rounded-lg flex items-center justify-center text-lg text-white"
-              onClick={handleNext}
-            >
-              Next
-            </div>
-          </form>
-        )}
-
-        {currentStep === 2 && (
-          <form className="mb-[50px] w-full flex flex-col gap-[90px]">
-            <div className="w-full flex flex-col items-center justify-center shadow-xl">
-              <p className="text-xl font-bold py-[20px]">
-                Upload drive’s license
-              </p>
-              <p>Please upload your valid driver's license</p>
-              <label
-                htmlFor="gallery-input"
-                className="w-[70%] mt-[20px] p-[20px] flex-col gap-[15px] cursor-pointer bg-transparent border-dashed border-[1px] border-[#394496] text-[#394496] rounded-lg flex items-center justify-center"
-              >
-                <IoCloudUploadOutline className="text-4xl" />
+        <form onSubmit={handleSubmit} className="w-full">
+          {currentStep === 1 && (
+            <div className="mb-10 flex flex-col gap-5">
+              <div className="flex flex-col gap-2">
+                <label className="text-gray-700 capitalize">first Name*</label>
                 <input
-                  id="gallery-input"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleGallerySelect}
-                  className="hidden"
+                  className="w-full h-14 border border-gray-500 rounded-lg px-4"
+                  type="text"
+                  onChange={(e) =>
+                    setFormData({ ...formData, fullName: e.target.value })
+                  }
                 />
-                <p>Drag your file(s) or browse</p>
-                <p>Max 10 MB files are allowed</p>
-              </label>
-              <p className="text-md py-[20px]">
-                Only support .jpg, .png and .svg and zip files
-              </p>
-            </div>
-            <div className="w-full flex flex-col items-center justify-center shadow-xl">
-              <p className="text-xl font-bold py-[20px]">
-                Upload vehicle registration (Carte Grise)
-              </p>
-              <p>Please upload your valid driver's license</p>
-              <label
-                htmlFor="gallery-input"
-                className="w-[70%] mt-[20px] p-[20px] flex-col gap-[15px] cursor-pointer bg-transparent border-dashed border-[1px] border-[#394496] text-[#394496] rounded-lg flex items-center justify-center"
-              >
-                <IoCloudUploadOutline className="text-4xl" />
-                <p>Drag your file(s) or browse</p>
-                <p>Max 10 MB files are allowed</p>
-
+              </div>
+              <div className="flex flex-col gap-2">
+                <label className="text-gray-700 capitalize">email*</label>
                 <input
-                  id="gallery-input"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleGallerySelect}
-                  className="hidden"
+                  className="w-full h-14 border border-gray-500 rounded-lg px-4"
+                  type="email"
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
                 />
-              </label>
-              <p className="text-md py-[20px]">
-                Only support .jpg, .png and .svg and zip files
-              </p>
-            </div>
-            <div className="w-full flex flex-col items-center justify-center shadow-xl">
-              <p className="text-xl font-bold py-[20px]">authorization</p>
-
-              <label
-                htmlFor="gallery-input"
-                className="w-[70%] mt-[20px] p-[20px] flex-col gap-[15px] cursor-pointer bg-transparent border-dashed border-[1px] border-[#394496] text-[#394496] rounded-lg flex items-center justify-center"
-              >
-                <IoCloudUploadOutline className="text-4xl" />
-                <p>Drag your file(s) or browse</p>
-                <p>Max 10 MB files are allowed</p>
-
+              </div>
+              <div className="flex flex-col gap-2">
+                <label className="text-gray-700 capitalize">password*</label>
                 <input
-                  id="gallery-input"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleGallerySelect}
-                  className="hidden"
+                  className="w-full h-14 border border-gray-500 rounded-lg px-4"
+                  type="password"
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
                 />
-              </label>
-              <p className="text-md py-[20px]">
-                Only support .jpg, .png and .svg and zip files
-              </p>
-            </div>
-
-            <div
-              className="w-full cursor-pointer bg-[#394496] h-[55px] rounded-lg flex items-center justify-center text-lg text-white"
-              onClick={handleNext}
-            >
-              Next
-            </div>
-          </form>
-        )}
-
-        {currentStep === 3 && (
-          <form className="mb-[50px] items-center max-w-full flex flex-col gap-[80px]">
-            <h1 className="max-w-[542.81px] p-[18px] border-[2px] border-[#696F79]">
-              To verify your identity, please take a clear selfie while holding
-              your driver's license next to your face. Ensure both your face and
-              the license details are fully visible and in focus*
-            </h1>
-
-            <div className="w-full">
-              {isWebcamActive ? (
-                <video
-                  ref={videoRef}
-                  className="w-full max-w-[542.81px] border-[2px] border-[#696F79]"
-                  autoPlay
+              </div>
+              <div className="flex flex-col gap-2">
+                <label className="text-gray-700 capitalize">
+                  confirm password*
+                </label>
+                <input
+                  className="w-full h-14 border border-gray-500 rounded-lg px-4"
+                  type="password"
+                  onChange={(e) =>
+                    setFormData({ ...formData, cpassword: e.target.value })
+                  }
                 />
-              ) : (
-                <img
-                  src={galleryImage || img2}
-                  alt="Preview"
-                  className="w-full max-w-[542.81px] border-[2px] border-[#696F79]"
-                />
-              )}
-            </div>
-
-            <div className="w-full">
-              {/* ALLOW CAMERA ACCESS */}
-              <div
-                className="w-full cursor-pointer bg-[#394496] h-[55px] rounded-lg flex items-center justify-center text-lg text-white"
-                onClick={handleCameraAccess}
-              >
-                ALLOW CAMERA ACCESS
               </div>
 
-              {/* TAKE FROM GALLERY */}
-              <label
-                htmlFor="gallery-input"
-                className="w-full mt-[20px] cursor-pointer bg-transparent border-[1px] border-[#394496] text-[#394496] h-[55px] rounded-lg flex items-center justify-center text-lg"
+              <div className="flex items-center gap-2">
+                <input type="checkbox" className="w-5 h-5" />
+                <p className="text-gray-700">I agree to terms & conditions</p>
+              </div>
+              <button
+                type="button"
+                onClick={handleNext}
+                className="bg-blue-600 h-14 rounded-lg text-white w-full"
               >
-                TAKE FROM GALLERY
-                <input
-                  id="gallery-input"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleGallerySelect}
-                  className="hidden"
-                />
+                Next
+              </button>
+            </div>
+          )}
+
+          {currentStep === 2 && (
+            <div className="mb-10 flex flex-col gap-10">
+              <div className="flex flex-col items-center gap-4 shadow p-6">
+                <p className="text-xl font-bold">Driver's License</p>
+                <label className="w-3/4 p-4 flex flex-col items-center gap-2 cursor-pointer bg-transparent border-dashed border-2 border-blue-600 text-blue-600 rounded-lg">
+                  <IoCloudUploadOutline className="text-4xl" />
+                  <FileBase64
+                    multiple={false}
+                    onDone={({ base64 }) => setDriveLicense(base64)}
+                  />
+                  <p>Drag your file(s) or browse</p>
+                  <p className="text-sm">Max 6 MB, supported: .jpg, .png</p>
+                </label>
+              </div>
+              <div className="flex flex-col items-center gap-4 shadow p-6">
+                <p className="text-xl font-bold">Vehicle Registrations</p>
+                <label className="w-3/4 p-4 flex flex-col items-center gap-2 cursor-pointer bg-transparent border-dashed border-2 border-blue-600 text-blue-600 rounded-lg">
+                  <IoCloudUploadOutline className="text-4xl" />
+                  <FileBase64
+                    multiple={false}
+                    onDone={({ base64 }) => setVehicleRegistrations(base64)}
+                  />
+                  <p>Drag your file(s) or browse</p>
+                  <p className="text-sm">Max 6 MB, supported: .jpg, .png</p>
+                </label>
+              </div>
+              <div className="flex flex-col items-center gap-4 shadow p-6">
+                <p className="text-xl font-bold">Authorization</p>
+                <label className="w-3/4 p-4 flex flex-col items-center gap-2 cursor-pointer bg-transparent border-dashed border-2 border-blue-600 text-blue-600 rounded-lg">
+                  <IoCloudUploadOutline className="text-4xl" />
+                  <FileBase64
+                    multiple={false}
+                    onDone={({ base64 }) => setAuthorization(base64)}
+                  />
+                  <p>Drag your file(s) or browse</p>
+                  <p className="text-sm">Max 6 MB, supported: .jpg, .png</p>
+                </label>
+              </div>
+              <button
+                type="button"
+                onClick={handleNext}
+                className="bg-blue-600 h-14 rounded-lg text-white w-full"
+              >
+                Next
+              </button>
+            </div>
+          )}
+
+          {currentStep === 3 && (
+            <div className="mb-10 flex flex-col items-center gap-10">
+              <p className="p-4 border-2 border-gray-500">
+                To verify your identity, please take a clear selfie holding your
+                driver's license.
+              </p>
+              <label className="w-full cursor-pointer bg-blue-600 text-white h-14 rounded-lg flex items-center justify-center">
+                Allow Camera Access
+                <input type="file" accept="image/*" className="hidden" />
               </label>
+              <button
+                type="submit"
+                className="bg-blue-600 h-14 rounded-lg text-white w-full"
+              >
+                Submit
+              </button>
             </div>
-
-            <button
-              className="w-full cursor-pointer bg-[#394496] h-[55px] rounded-lg flex items-center justify-center text-lg text-white"
-              onClick={handleNext}
-            >
-              Submit
-            </button>
-          </form>
-        )}
-
-        {currentStep === 4 && (
-          <div>
-            {/* Step 4 content */}
-            <h1>Step 4</h1>
-            <div
-              className="cursor-pointer bg-[#394496] h-[55px] rounded-lg flex items-center justify-center text-lg text-white"
-              onClick={handleBack}
-            >
-              Submit
-            </div>
-          </div>
-        )}
+          )}
+        </form>
+        {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+        {message && <p className="text-green-500">{message}</p>}
       </div>
     </div>
   );
