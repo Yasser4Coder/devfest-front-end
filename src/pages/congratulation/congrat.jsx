@@ -1,7 +1,4 @@
 import { Check } from "lucide-react";
-import Card from "../../components/Card";
-import photo from "../../images/Group 309.png";
-
 export default function CongartPage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-white p-4">
