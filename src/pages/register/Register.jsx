@@ -48,7 +48,6 @@ const Register = () => {
 
   return (
     <div className="w-full mt-[20px] relative flex items-center justify-center overflow-x-hidden">
-      
       <div
         className="absolute top-[5%] cursor-pointer left-[10%]"
         onClick={handleBack}
