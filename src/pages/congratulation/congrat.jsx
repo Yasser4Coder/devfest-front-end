@@ -1,4 +1,6 @@
 import { Check } from "lucide-react";
+import Card from "../../components/Card";
+import photo from "../../images/Group 309.png";
 
 export default function CongartPage() {
   return (
@@ -28,6 +30,7 @@ export default function CongartPage() {
         {/* Payment Methods would go here */}
         <div className="mt-8 space-y-4">
           {/* if yo want to Add payment method options here */}
+          
         </div>
       </div>
     </div>
