@@ -4,6 +4,7 @@ import Register from "./pages/register/Register";
 import LoginForm from "./pages/login/login";
 import ConfirmationPage from "./pages/submitcomfirmation";
 import CongartPage from "./pages/congratulation/congrat";
+import CameraAccess from "./pages/cameraAccess";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         {/* this is just for testing routers and see pages ( defaault goal to just view page)*/}
         <Route path="/submitconfirmation" element={<ConfirmationPage />} />
         <Route path="/congrat" element={< CongartPage />} />
+        <Route path="/accescamera" element={< CameraAccess />} />
       </Routes>
     </div>
   );

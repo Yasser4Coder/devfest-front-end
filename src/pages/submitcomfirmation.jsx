@@ -31,8 +31,8 @@ function TwentyFourIcon() {
 
 function ConfirmationPage() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4">
-      <div className="max-w-md w-full text-center space-y-6">
+    <div className="min-h-screen px-4 flex justify-center">
+      <div className="max-w-md w-full text-center space-y-6 flex flex-col items-center justify-center">
         <TwentyFourIcon />
         <h1 className="text-2xl font-bold">
           Thanks for submitting your details!
@@ -41,7 +41,7 @@ function ConfirmationPage() {
           We&apos;re reviewing your information and will have your results ready
           within 24 hours. Stay tuned for an update soon!
         </p>
-        <button className="bg-[#3B3D8A] hover:bg-[#2E2F6C] text-white px-8 py-2 rounded-full w-full max-w-xs">
+        <button className="bg-[#3B3D8A] hover:bg-[#2E2F6C] text-white px-8 py-4 rounded-full w-full max-w-xs">
           <Link to="/">back to home page</Link>
         </button>
       </div>
