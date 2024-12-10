@@ -15,9 +15,12 @@ const Header = () => {
         <Link>help</Link>
       </div>
       <div className="flex items-center gap-[20px] text-lg">
-        <button className=" bg-[#394496] w-[149px] h-[48px] rounded-lg text-white">
+        <Link
+          to={"login"}
+          className="flex items-center justify-center bg-[#394496] w-[149px] h-[48px] rounded-lg text-white"
+        >
           Log in
-        </button>
+        </Link>
         <Link
           to={"register"}
           className="bg-transparent flex items-center justify-center border-2 border-[#394496] w-[149px] h-[48px] rounded-lg text-[#394496]"
