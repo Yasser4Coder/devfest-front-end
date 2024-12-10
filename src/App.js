@@ -5,6 +5,8 @@ import LoginForm from "./pages/login/login";
 import ConfirmationPage from "./pages/submitcomfirmation";
 import CongartPage from "./pages/congratulation/congrat";
 import CameraAccess from "./pages/cameraAccess";
+import Admin from "./pages/admin/admin";
+import Home2 from "./pages/home2/Home2";
 
 function App() {
   return (
@@ -17,6 +19,10 @@ function App() {
         <Route path="/submitconfirmation" element={<ConfirmationPage />} />
         <Route path="/congrat" element={< CongartPage />} />
         <Route path="/accescamera" element={< CameraAccess />} />
+        
+        <Route path="/admin" element={< Admin />} />
+        <Route path="/home2" element={< Home2 />} />
+
       </Routes>
     </div>
   );
